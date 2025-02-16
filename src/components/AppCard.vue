@@ -1,96 +1,84 @@
+<!-- src/components/AppCard.vue -->
 <template>
-  <a-card class="appCard" hoverable @click="doCardClick">
-    <template #actions>
-      <!--      <span class="icon-hover"> <IconThumbUp /> </span>-->
-      <span class="icon-hover" @click="doShare"> <IconShareInternal /> </span>
-    </template>
-    <template #cover>
-      <div
-        :style="{
-          height: '204px',
-          overflow: 'hidden',
-        }"
-      >
-        <img
-          :style="{ width: '100%', transform: 'translateY(-20px)' }"
-          :alt="app.appName"
-          :src="app.appIcon"
-        />
+  <el-card class="app-card" :body-style="{ padding: '0px' }" shadow="hover" @click="handleClick">
+    <div class="app-icon">
+      <el-image :src="app.icon" fit="cover" />
+    </div>
+    <div class="app-content">
+      <h3>{{ app.name }}</h3>
+      <p class="description">{{ app.description }}</p>
+      <div class="features">
+        <el-tag v-for="feature in app.features" :key="feature" size="small" class="feature-tag">
+          {{ feature }}
+        </el-tag>
       </div>
-    </template>
-    <a-card-meta :title="app.appName" :description="app.appDesc">
-      <template #avatar>
-        <div
-          :style="{ display: 'flex', alignItems: 'center', color: '#1D2129' }"
-        >
-          <a-avatar
-            :size="24"
-            :image-url="app.user?.userAvatar"
-            :style="{ marginRight: '8px' }"
-          />
-          <a-typography-text
-            >{{ app.user?.userName ?? "无名" }}
-          </a-typography-text>
-        </div>
-      </template>
-    </a-card-meta>
-  </a-card>
-  <ShareModal :link="shareLink" title="应用分享" ref="shareModalRef" />
+    </div>
+  </el-card>
 </template>
 
-<script setup lang="ts">
-import { IconShareInternal } from "@arco-design/web-vue/es/icon";
-import API from "@/api";
-import { defineProps, ref, withDefaults } from "vue";
-import { useRouter } from "vue-router";
-import ShareModal from "@/components/ShareModal.vue";
-
-interface Props {
-  app: API.AppVO;
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  app: () => {
-    return {};
+<script>
+export default {
+  name: 'AppCard',
+  props: {
+    app: {
+      type: Object,
+      required: true
+    }
   },
-});
-
-const router = useRouter();
-const doCardClick = () => {
-  router.push(`/app/detail/${props.app.id}`);
-};
-
-// 分享弹窗的引用
-const shareModalRef = ref();
-
-// 分享链接
-const shareLink = `${window.location.protocol}//${window.location.host}/app/detail/${props.app.id}`;
-
-// 分享
-const doShare = (e: Event) => {
-  if (shareModalRef.value) {
-    shareModalRef.value.openModal();
+  methods: {
+    handleClick() {
+      this.$emit('click')
+    }
   }
-  // 阻止冒泡，防止跳转到详情页
-  e.stopPropagation();
-};
+}
 </script>
+
 <style scoped>
-.appCard {
+.app-card {
+  height: 100%;
   cursor: pointer;
+  transition: transform 0.3s;
 }
 
-.icon-hover {
+.app-card:hover {
+  transform: translateY(-5px);
+}
+
+.app-icon {
+  height: 160px;
+  overflow: hidden;
+}
+
+.app-icon .el-image {
+  width: 100%;
+  height: 100%;
+}
+
+.app-content {
+  padding: 16px;
+}
+
+.app-content h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  color: #303133;
+}
+
+.description {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  color: #606266;
+  line-height: 1.4;
+}
+
+.features {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  transition: all 0.1s;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.icon-hover:hover {
-  background-color: rgb(var(--gray-2));
+.feature-tag {
+  margin-right: 8px;
+  margin-bottom: 8px;
 }
 </style>

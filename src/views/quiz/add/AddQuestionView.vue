@@ -84,7 +84,7 @@ import {
   listQuestionVoByPageUsingPost,
 } from "@/api/questionController";
 import message from "@arco-design/web-vue/es/message";
-import AiGenerateQuestionDrawer from "@/views/add/components/AiGenerateQuestionDrawer.vue";
+import AiGenerateQuestionDrawer from "@/views/quiz/add/components/AiGenerateQuestionDrawer.vue";
 
 interface Props {
   appId: string;

@@ -57,7 +57,7 @@
 import { defineProps, ref, withDefaults } from "vue";
 import API from "@/api";
 import { useRouter } from "vue-router";
-import ScoringResultTable from "@/views/add/components/ScoringResultTable.vue";
+import ScoringResultTable from "@/views/quiz/add/components/ScoringResultTable.vue";
 import {
   addScoringResultUsingPost,
   editScoringResultUsingPost,
