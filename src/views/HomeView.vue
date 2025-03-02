@@ -54,6 +54,9 @@
         </el-col>
       </el-row>
     </div>
+
+    <!-- Dify 聊天机器人 -->
+    <div id="dify-chatbot-container"></div>
   </div>
 </template>
 
@@ -61,10 +64,18 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import lottie from 'lottie-web'
+import { initDifyChatbot, hideChatbot, resetChatbot } from '@/utils/difyChatbot'
 
 const router = useRouter()
 const lottieContainers = ref([])
 const lottieInstances = ref([])
+
+// 特性数据
+const features = ref([
+  { icon: 'ChatLineRound', text: '智能对话' },
+  { icon: 'PictureFilled', text: '图像创作' },
+  { icon: 'VideoPlay', text: '视频生成' }
+])
 
 // 应用数据
 const apps = ref([
@@ -146,15 +157,17 @@ const handleAppClick = (route) => {
 
 onMounted(() => {
   initLottieAnimations()
+  initDifyChatbot()
 })
 
-// 清理动画实例
+// 清理动画实例和隐藏聊天机器人
 onUnmounted(() => {
   lottieInstances.value.forEach(animation => {
     if (animation) {
       animation.destroy()
     }
   })
+  hideChatbot()
 })
 </script>
 
