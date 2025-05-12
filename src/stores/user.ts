@@ -12,7 +12,6 @@ export const useLoginUserStore = defineStore('counter', () => {
   async function fetchLoginUser() {
     // 调用接口获取用户信息
     const res = await getLoginUserUsingGet()
-    // loginUser.value = res.data
     if (res.data.code === 0 && res.data.data) {
       loginUser.value = res.data.data
     } else {
@@ -22,8 +21,14 @@ export const useLoginUserStore = defineStore('counter', () => {
     }
   }
 
-  function setLoginUser(user: API.LoginUserVO) {
-    loginUser.value = user
+  function setLoginUser(user: API.LoginUserVO | null) {
+    if (user === null) {
+      loginUser.value = {
+        userRole: ACCESS_ENUM.NOT_LOGIN,
+      }
+    } else {
+      loginUser.value = user
+    }
   }
 
   return { loginUser, fetchLoginUser, setLoginUser }

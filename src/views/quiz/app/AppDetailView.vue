@@ -11,13 +11,8 @@
             <a-space>
               作者：
               <div :style="{ display: 'flex', alignItems: 'center' }">
-                <a-avatar
-                  :size="24"
-                  :image-url="data.user?.userAvatar"
-                  :style="{ marginRight: '8px' }"
-                />
-                <a-typography-text
-                  >{{ data.user?.userName ?? "无名" }}
+                <a-avatar :size="24" :image-url="data.user?.userAvatar" :style="{ marginRight: '8px' }" />
+                <a-typography-text>{{ data.user?.userName ?? "无名" }}
                 </a-typography-text>
               </div>
             </a-space>
@@ -26,17 +21,14 @@
             创建时间：{{ dayjs(data.createTime).format("YYYY-MM-DD HH:mm:ss") }}
           </p>
           <a-space size="medium">
-            <a-button type="primary" :href="`/answer/do/${id}`"
-              >开始答题
+            <a-button type="primary" @click="navigateTo(`/quiz/answer/do/${id}`)">开始答题
             </a-button>
             <a-button @click="doShare">分享应用</a-button>
-            <a-button v-if="isMy" :href="`/add/question/${id}`"
-              >设置题目
+            <a-button v-if="isMy" @click="navigateTo(`/quiz/add/question/${id}`)">设置题目
             </a-button>
-            <a-button v-if="isMy" :href="`/add/scoring_result/${id}`"
-              >设置评分
+            <a-button v-if="isMy" @click="navigateTo(`/quiz/add/scoring_result/${id}`)">设置评分
             </a-button>
-            <a-button v-if="isMy" :href="`/add/app/${id}`">修改应用</a-button>
+            <a-button v-if="isMy" @click="navigateTo(`/quiz/add/app/${id}`)">修改应用</a-button>
           </a-space>
         </a-col>
         <a-col flex="320px">
@@ -82,6 +74,13 @@ const isMy = computed(() => {
 });
 
 /**
+ * 导航到指定路由
+ */
+const navigateTo = (route: string) => {
+  router.push(route);
+};
+
+/**
  * 加载数据
  */
 const loadData = async () => {
@@ -122,9 +121,7 @@ const doShare = (e: Event) => {
 </script>
 
 <style scoped>
-
-
-#appDetailPage .content-wrapper > * {
+#appDetailPage .content-wrapper>* {
   margin-bottom: 24px;
 }
 </style>

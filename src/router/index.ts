@@ -9,6 +9,11 @@ const router = createRouter({
     {
       path: '/',
       name: '主页',
+      redirect: '/user/login',
+    },
+    {
+      path: '/home',
+      name: '首页',
       component: HomeView,
     },
     {
@@ -36,20 +41,28 @@ const router = createRouter({
       ],
     },
     {
+      path: '/admin/user',
+      name: '用户管理',
+      component: () => import('@/views/user/AdminUserView.vue'),
+      meta: {
+        access: ACCESS_ENUM.ADMIN,
+      },
+    },
+
+    {
       path: '/quiz/home',
       name: '智能答题系统',
       component: () => import('../views/quiz/QuizHome.vue'),
-      meta: {
-      },
+      meta: {},
     },
     {
-      path: '/add/app',
+      path: '/quiz/add/app',
       name: '创建应用',
       component: () => import('@/views/quiz/add/AddAppView.vue'),
     },
 
     {
-      path: '/add/app/:id',
+      path: '/quiz/add/app/:id',
       name: '修改应用',
       props: true,
       component: () => import('@/views/quiz/add/AddAppView.vue'),
@@ -58,7 +71,7 @@ const router = createRouter({
       },
     },
     {
-      path: '/add/question/:appId',
+      path: '/quiz/add/question/:appId',
       name: '创建题目',
       component: () => import('@/views/quiz/add/AddQuestionView.vue'),
       props: true,
@@ -67,7 +80,7 @@ const router = createRouter({
       },
     },
     {
-      path: '/add/scoring_result/:appId',
+      path: '/quiz/add/scoring_result/:appId',
       name: '创建评分',
       component: () => import('@/views/quiz/add/AddScoringResultView.vue'),
       props: true,
@@ -76,7 +89,7 @@ const router = createRouter({
       },
     },
     {
-      path: '/app/detail/:id',
+      path: '/quiz/app/detail/:id',
       name: '应用详情页',
       props: true,
       component: () => import('@/views/quiz/app/AppDetailView.vue'),
@@ -85,7 +98,7 @@ const router = createRouter({
       },
     },
     {
-      path: '/answer/do/:appId',
+      path: '/quiz/answer/do/:appId',
       name: '答题',
       component: () => import('@/views/quiz/answer/DoAnswerView.vue'),
       props: true,
@@ -95,7 +108,7 @@ const router = createRouter({
       },
     },
     {
-      path: '/answer/result/:id',
+      path: '/quiz/answer/result/:id',
       name: '答题结果',
       component: () => import('@/views/quiz/answer/AnswerResultView.vue'),
       props: true,
@@ -105,23 +118,16 @@ const router = createRouter({
       },
     },
     {
-      path: '/answer/my',
+      path: '/quiz/answer/my',
       name: '我的答题',
       component: () => import('@/views/quiz/answer/MyAnswerView.vue'),
       meta: {
         access: ACCESS_ENUM.USER,
       },
     },
+
     {
-      path: '/admin/user',
-      name: '用户管理',
-      component: () => import('@/views/quiz/admin/AdminUserView.vue'),
-      meta: {
-        access: ACCESS_ENUM.ADMIN,
-      },
-    },
-    {
-      path: '/admin/app',
+      path: '/quiz/admin/app',
       name: '应用管理',
       component: () => import('@/views/quiz/admin/AdminAppView.vue'),
       meta: {
@@ -129,7 +135,7 @@ const router = createRouter({
       },
     },
     {
-      path: '/admin/question',
+      path: '/quiz/admin/question',
       name: '题目管理',
       component: () => import('@/views/quiz/admin/AdminQuestionView.vue'),
       meta: {
@@ -137,7 +143,7 @@ const router = createRouter({
       },
     },
     {
-      path: '/admin/scoring_result',
+      path: '/quiz/admin/scoring_result',
       name: '评分管理',
       component: () => import('@/views/quiz/admin/AdminScoringResultView.vue'),
       meta: {
@@ -145,7 +151,7 @@ const router = createRouter({
       },
     },
     {
-      path: '/admin/user_answer',
+      path: '/quiz/admin/user_answer',
       name: '回答管理',
       component: () => import('@/views/quiz/admin/AdminUserAnswerView.vue'),
       meta: {
@@ -153,7 +159,7 @@ const router = createRouter({
       },
     },
     {
-      path: '/app_statistic',
+      path: '/quiz/app_statistic',
       name: '应用统计',
       component: () => import('@/views/quiz/statistic/AppStatisticView.vue'),
       meta: {
@@ -181,9 +187,19 @@ const router = createRouter({
       path: '/image/home',
       name: 'AI 图像工坊',
       component: () => import('../views/image/ImageHome.vue'),
-      meta: {
-        hideInMenu: true,
-      },
+      meta: {},
+    },
+    {
+      path: '/image/createPicture',
+      name: '创建图片',
+      component: () => import('../views/image/CreatePicture.vue'),
+      meta: {},
+    },
+    {
+      path: '/image/pictureManage',
+      name: '图片管理',
+      component: () => import('../views/image/PictureManage.vue'),
+      meta: {},
     },
     {
       path: '/video/home',

@@ -19,7 +19,7 @@ export function initDifyChatbot() {
   // 配置 Dify 聊天机器人
   window.difyChatbotConfig = {
     token: 'XpcO5MZAwCOFvAEu',
-    baseUrl: 'http://127.0.0.1',
+    baseUrl: 'http://difychat.by.takin.cc',
   }
 
   // 如果脚本已加载，直接显示聊天机器人
@@ -33,7 +33,7 @@ export function initDifyChatbot() {
   // 加载脚本
   console.log('加载 Dify 脚本')
   const script = document.createElement('script')
-  script.src = 'http://127.0.0.1/embed.min.js'
+  script.src = 'http://difychat.by.takin.cc/embed.min.js'
   script.id = 'XpcO5MZAwCOFvAEu'
   script.defer = true
 

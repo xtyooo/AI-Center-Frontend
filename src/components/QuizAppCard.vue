@@ -46,7 +46,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const router = useRouter();
 const doCardClick = () => {
-  router.push(`/app/detail/${props.app.id}`);
+  router.push(`/quiz/app/detail/${props.app.id}`);
 };
 
 // 分享弹窗的引用

@@ -11,7 +11,8 @@
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
-    "openapi2ts": "openapi2ts"
+    "openapi2ts": "openapi2ts",
+    "openapi": "node openapi.config.js"
   },
   "dependencies": {
     "axios": "^1.7.7",
@@ -45,3 +46,4 @@
     "vue-tsc": "^2.1.6"
   }
 }
+

@@ -5,6 +5,7 @@
 import * as appController from './appController'
 import * as appStatisticController from './appStatisticController'
 import * as fileController from './fileController'
+import * as pictureController from './pictureController'
 import * as postController from './postController'
 import * as postFavourController from './postFavourController'
 import * as postThumbController from './postThumbController'
@@ -16,6 +17,7 @@ export default {
   appController,
   appStatisticController,
   fileController,
+  pictureController,
   postController,
   postFavourController,
   postThumbController,

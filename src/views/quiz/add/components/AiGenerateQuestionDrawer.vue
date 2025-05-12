@@ -103,8 +103,8 @@ const doSSESubmit = async () => {
 
   sseSubmitting.value = true;
   const eventSource = new EventSource(
-    // 完整后端接口地址+参数
-    "http://localhost:8101/api/app/ai_generate/sse?appId=" + props.appId +
+    // 使用相对路径，这样会自动适应当前环境
+    "/api/app/ai_generate/sse?appId=" + props.appId +
     "&questionNumber=" + form.questionNumber + "&optionNumber=" + form.optionNumber
   )
   let first = true;

@@ -33,7 +33,9 @@ myAxios.interceptors.response.use(
         !response.request.responseURL.includes('user/get/login') &&
         !window.location.pathname.includes('/user/login')
       ) {
-        window.location.href = `/user/login?redirect=${window.location.href}`
+        // 提取当前路径（不包含域名和端口）
+        const currentPath = window.location.pathname + window.location.search
+        window.location.href = `/user/login?redirect=${encodeURIComponent(currentPath)}`
       }
     }
     return response

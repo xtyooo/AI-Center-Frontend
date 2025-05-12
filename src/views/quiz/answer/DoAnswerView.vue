@@ -169,7 +169,7 @@ const doSubmit = async () => {
     id: id.value as any,
   });
   if (res.data.code === 0 && res.data.data) {
-    router.push(`/answer/result/${res.data.data}`);
+    router.push(`/quiz/answer/result/${res.data.data}`);
   } else {
     message.error("提交答案失败，" + res.data.message);
   }

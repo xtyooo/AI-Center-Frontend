@@ -38,10 +38,14 @@
       <el-row :gutter="20">
         <el-col v-for="(app, index) in apps" :key="app.id" :xs="24" :sm="12" :md="8" :lg="6" class="app-col"
           :style="{ animationDelay: `${index * 0.1}s` }">
-          <div class="app-card" @click="handleAppClick(app.route)">
+          <div class="app-card" :class="{ 'app-card-dev': app.route !== '/quiz/home' }"
+            @click="handleAppClick(app.route)">
             <div class="lottie-container" :ref="el => { if (el) lottieContainers[index] = el }"></div>
             <div class="card-content">
-              <h3>{{ app.name }}</h3>
+              <div class="card-header">
+                <h3>{{ app.name }}</h3>
+                <el-tag v-if="app.route !== '/quiz/home'" type="warning" effect="dark" class="dev-tag">开发中</el-tag>
+              </div>
               <p class="description">{{ app.description }}</p>
               <div class="features-list">
                 <span v-for="(feature, fIndex) in app.features" :key="fIndex" class="feature-tag"
@@ -65,16 +69,20 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import lottie from 'lottie-web'
 import { initDifyChatbot, hideChatbot, resetChatbot } from '@/utils/difyChatbot'
+import { ElMessage } from 'element-plus'
+import { useLoginUserStore } from '@/stores/user'
 
 const router = useRouter()
 const lottieContainers = ref([])
 const lottieInstances = ref([])
+const loginUserStore = useLoginUserStore()
 
 // 特性数据
 const features = ref([
   { icon: 'ChatLineRound', text: '智能对话' },
   { icon: 'PictureFilled', text: '图像创作' },
-  { icon: 'VideoPlay', text: '视频生成' }
+  { icon: 'VideoPlay', text: '视频生成' },
+  { icon: 'Document', text: 'BI分析' },
 ])
 
 // 应用数据
@@ -83,7 +91,7 @@ const apps = ref([
     id: 1,
     name: '智能答题系统',
     description: 'AI 驱动的智能答题和评测系统',
-    features: ['智能出题', '实时评测', '成长分析'],
+    features: ['智能出题', '实时评测', 'AI评测'],
     route: '/quiz/home',
     lottieFile: '/Lottie/bg.json'
   },
@@ -91,7 +99,7 @@ const apps = ref([
     id: 2,
     name: 'AI 图像工坊',
     description: '一键生成精美图片，激发创意灵感',
-    features: ['文生图', '图生图', '图片编辑'],
+    features: ['文生图', '图生图', '图片编辑', '云图库', '协同编辑'],
     route: '/image/home',
     lottieFile: '/Lottie/cargo.json'
   },
@@ -150,12 +158,25 @@ const initLottieAnimations = () => {
 
 // 处理卡片点击
 const handleAppClick = (route) => {
-  if (route) {
+  // 只允许智能答题系统模块访问，其他模块显示提示信息
+  if (route === '/quiz/home') {
     router.push(route)
+  } else {
+    ElMessage({
+      message: '该功能正在开发中，敬请期待！',
+      type: 'info',
+      duration: 3000
+    })
   }
 }
 
 onMounted(() => {
+  // 检查用户是否已登录，未登录则跳转到登录页面
+  if (!loginUserStore.loginUser || !loginUserStore.loginUser.userRole) {
+    router.push('/user/login')
+    return
+  }
+
   initLottieAnimations()
   initDifyChatbot()
 })
@@ -422,6 +443,50 @@ onUnmounted(() => {
   height: 100%;
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+
+/* 在开发中的卡片上添加一个半透明的遮罩 */
+.app-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0);
+  z-index: 1;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+/* 在不可用的卡片上显示禁用状态 */
+.app-card-dev {
+  cursor: not-allowed;
+}
+
+.app-card-dev:hover::before {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* 智能答题系统卡片悬停时的特殊效果 */
+.app-card:not(.app-card-dev):hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+}
+
+.app-card:not(.app-card-dev):hover .lottie-container {
+  transform: scale(1.02) !important;
+}
+
+/* 移除所有卡片的通用悬停效果 */
+.app-card:hover {
+  transform: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.app-card:hover .lottie-container {
+  transform: none;
 }
 
 .lottie-container {
@@ -442,6 +507,19 @@ onUnmounted(() => {
   gap: 12px;
   background: white;
   border-radius: 0 0 12px 12px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dev-tag {
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: bold;
 }
 
 .card-content h3 {
@@ -484,15 +562,6 @@ onUnmounted(() => {
   background: rgba(var(--el-color-primary-rgb), 0.15);
   transform: translateY(-2px);
   box-shadow: 0 2px 8px rgba(var(--el-color-primary-rgb), 0.2);
-}
-
-.app-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-}
-
-.app-card:hover .lottie-container {
-  transform: scale(1.02);
 }
 
 /* 确保内容在背景之上 */

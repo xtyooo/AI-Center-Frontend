@@ -1,90 +1,286 @@
 <template>
-  <el-form :label-position="labelPosition" label-width="auto" :model="formValue" style="max-width: 600px">
+  <div class="login-container">
+    <div class="login-box">
+      <!-- 标题区域 -->
+      <div class="title-area">
+        <h1>AI 创作中心</h1>
+        <p class="subtitle">一站式 AI 创作解决方案</p>
+      </div>
 
-    <el-form-item label="账号" :label-position="itemLabelPosition">
-      <el-input v-model="formValue.userAccount" />
-    </el-form-item>
-    <el-form-item label="密码" :label-position="itemLabelPosition">
-      <el-input v-model="formValue.userPassword" type="password" />
-    </el-form-item>
-    <!-- <el-form-item label="Activity form" :label-position="itemLabelPosition">
-      <el-input v-model="formLabelAlign.type" />
-    </el-form-item> -->
-    <el-form-item>
-      <el-button class="login-button" type="primary" @click="handleSubmit()">
-        登录
-      </el-button>
-      <el-button class="register-button" type="primary" plain @click="router.push('/user/register')">
-        去注册
-      </el-button>
-    </el-form-item>
-  </el-form>
+      <!-- 登录表单 -->
+      <el-form :model="formValue" class="login-form" :label-position="labelPosition">
+        <el-form-item>
+          <el-input v-model="formValue.userAccount" :prefix-icon="User" placeholder="请输入账号" size="large" />
+        </el-form-item>
 
+        <el-form-item>
+          <el-input v-model="formValue.userPassword" :prefix-icon="Lock" type="password" placeholder="请输入密码"
+            size="large" show-password />
+        </el-form-item>
+
+        <el-form-item>
+          <el-button class="login-button" type="primary" @click="handleSubmit()" size="large" :loading="loading">
+            登录
+          </el-button>
+        </el-form-item>
+
+        <div class="form-footer">
+          <span>还没有账号？</span>
+          <el-button type="primary" link @click="router.push('/user/register')">
+            立即注册
+          </el-button>
+        </div>
+      </el-form>
+    </div>
+
+    <!-- 背景动画 -->
+    <div class="animated-background">
+      <div class="gradient-circle"></div>
+      <div class="gradient-circle"></div>
+      <div class="gradient-circle"></div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
-
 import type { FormItemProps, FormProps } from 'element-plus'
 import { userLoginUsingPost } from '@/api/userController'
+import { useLoginUserStore } from '../../stores/user'
+import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router'
+import { User, Lock } from '@element-plus/icons-vue'
 
-const labelPosition = ref<FormProps['labelPosition']>('right')
-const itemLabelPosition = ref<FormItemProps['labelPosition']>('top')
+const labelPosition = ref<FormProps['labelPosition']>('top')
+const loading = ref(false)
+
 const formValue = reactive({
   userAccount: "",
   userPassword: "",
 } as API.UserLoginRequest)
 
-import { useLoginUserStore } from '../../stores/user'
-import { ElMessage } from 'element-plus'
-import { useRouter } from 'vue-router';
+const loginUserStore = useLoginUserStore()
+const router = useRouter()
 
-const loginUserStore = useLoginUserStore();
-const router = useRouter();
-/**
- * 提交表单（登录）
- * @param data
- */
 const handleSubmit = async () => {
-  const res = await userLoginUsingPost(formValue);
-  // 登录成功，跳转到主页
-  if (res.data.code === 0) {
-    await loginUserStore.fetchLoginUser();
-    ElMessage({
-      message: '登录成功',
-      type: 'success',
-    })
-    router.push({
-      path: "/",
-      replace: true,
-    });
-  } else {
-    ElMessage({
-      message: res.data.message,
-      type: 'error',
-    })
+  if (!formValue.userAccount || !formValue.userPassword) {
+    ElMessage.warning('请输入账号和密码')
+    return
   }
-};
 
+  loading.value = true
+  try {
+    const res = await userLoginUsingPost(formValue)
+    if (res.data.code === 0) {
+      await loginUserStore.fetchLoginUser()
+      ElMessage.success('登录成功')
 
-
-
+      // 获取URL中的redirect参数，如果没有则跳转到主页
+      const redirectUrl = new URLSearchParams(window.location.search).get('redirect')
+      if (redirectUrl) {
+        router.push(redirectUrl)
+      } else {
+        router.push({
+          path: "/home",
+          replace: true,
+        })
+      }
+    } else {
+      ElMessage.error(res.data.message || '登录失败')
+    }
+  } catch (error) {
+    ElMessage.error('登录失败，请稍后重试')
+  } finally {
+    loading.value = false
+  }
+}
 </script>
 
 <style scoped>
-/* 居中 */
-.el-form {
-  margin: 0 auto;
-  padding-top: 100px;
-  transform: translateX(25%);
-}
-/* 输入框短一点 */
-.el-input {
-  width: 300px;
-}
-/* 登录按钮和注册按钮分局两侧 */
-.register-button {
-  margin-left: 167px;
+.login-container {
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f5f7ff 0%, #f7f9fc 100%);
+  margin: 0;
+  padding: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
+.login-box {
+  width: 420px;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 1;
+  animation: fadeIn 0.6s ease-out;
+  flex-shrink: 0;
+  margin: 20px;
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.08),
+    0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.title-area {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.title-area h1 {
+  font-size: 28px;
+  color: var(--el-color-primary);
+  margin: 0 0 8px 0;
+  font-weight: 600;
+  background: linear-gradient(45deg, var(--el-color-primary), #409eff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+}
+
+.login-form {
+  width: 100%;
+}
+
+.login-form :deep(.el-input) {
+  --el-input-hover-border-color: var(--el-color-primary);
+}
+
+.login-form :deep(.el-input__wrapper) {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.login-form :deep(.el-input__wrapper:hover) {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.login-button {
+  width: 100%;
+  height: 44px;
+  font-size: 16px;
+  background: linear-gradient(45deg, var(--el-color-primary), #409eff);
+  border: none;
+  margin-top: 20px;
+}
+
+.login-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(64, 158, 255, 0.3);
+}
+
+.form-footer {
+  margin-top: 20px;
+  text-align: center;
+  color: #666;
+}
+
+/* 背景动画 */
+.animated-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.gradient-circle {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.5;
+  animation: float 20s infinite linear;
+}
+
+.gradient-circle:nth-child(1) {
+  width: 600px;
+  height: 600px;
+  background: linear-gradient(45deg, rgba(106, 17, 203, 0.1), rgba(37, 117, 252, 0.1));
+  top: -10%;
+  left: -10%;
+  animation-duration: 30s;
+}
+
+.gradient-circle:nth-child(2) {
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(45deg, rgba(37, 117, 252, 0.1), rgba(106, 17, 203, 0.1));
+  bottom: -5%;
+  right: -5%;
+  animation-duration: 25s;
+}
+
+.gradient-circle:nth-child(3) {
+  width: 300px;
+  height: 300px;
+  background: linear-gradient(45deg, rgba(106, 17, 203, 0.1), rgba(37, 117, 252, 0.1));
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation-duration: 20s;
+}
+
+@keyframes float {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  50% {
+    transform: translate(100px, 100px) rotate(180deg);
+  }
+
+  100% {
+    transform: translate(0, 0) rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 响应式适配 */
+@media screen and (max-width: 576px) {
+  .login-box {
+    width: calc(100% - 40px);
+    padding: 30px 20px;
+    margin: 20px;
+  }
+
+  .login-container {
+    padding: 0;
+  }
+
+  .title-area h1 {
+    font-size: 24px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+}
 </style>
