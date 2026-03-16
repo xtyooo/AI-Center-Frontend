@@ -21,7 +21,7 @@ myAxios.interceptors.request.use(
 // Add a response interceptor
 myAxios.interceptors.response.use(
   function (response) {
-    // Any status code that lie within the range of 2xx cause this function to trigger
+    // Any status code that lies within the range of 2xx causes this function to trigger
     // Do something with response data
     console.log(response)
 
@@ -41,7 +41,7 @@ myAxios.interceptors.response.use(
     return response
   },
   function (error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
+    // Any status codes that fall outside the range of 2xx cause this function to trigger
     // Do something with response error
     return Promise.reject(error)
   },
