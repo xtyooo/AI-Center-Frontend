@@ -8,7 +8,7 @@
 如果页面需要登录权限
 
 如果用户未登录，则跳转到登录页面。
-如果已登录，判断登录用户的权限是否符合要求，否则跳转到 401 无权限页面。
+如果已登录，判断登录用户的权限是否符合要求，否则跳转到无权限页面。
  */
 
 import router from '@/router'
@@ -20,13 +20,13 @@ router.beforeEach(async (to, from, next) => {
 
   let loginUser = loginUserStore.loginUser
   //全局自动登录
-  // // 如果之前没登陆过，自动登录
+  // 如果之前没登录过，自动登录
   if (!loginUser || !loginUser.userRole) {
     // 加 await 是为了等用户登录成功之后，再执行后续的代码
     await loginUserStore.fetchLoginUser()
     loginUser = loginUserStore.loginUser
   }
-  console.log('登陆用户信息', loginUser)
+  console.log('登录用户信息', loginUser)
   const needAccess = to.meta?.access ?? ACCESS_ENUM.NOT_LOGIN
   // 判断页面是否需要登录权限
   if (needAccess !== ACCESS_ENUM.NOT_LOGIN) {
@@ -38,12 +38,12 @@ router.beforeEach(async (to, from, next) => {
     ) {
       // 用户未登录，跳转到登录页面
       next({
-        path: '/login',
+        path: '/user/login',
         query: { redirect: to.fullPath },
         /**
          * redirect: to.fullPath这样做的目的是在用户登录成功后，
          * 可以将用户重定向到他们原本尝试访问的页面。
-         * 例如，用户尝试访问 /dashboard，但没有登录，于是被重定向到 /login。
+         * 例如，用户尝试访问 /dashboard，但没有登录，于是被重定向到 /user/login。
          * 在登录成功后，可以使用 redirect 查询参数将用户重定向回 /dashboard。
          * 通常，这种机制在处理需要身份验证的路由时非常有用。用户在访问受保护的页面，
          * 如果未登录，会被重定向到登录页面，

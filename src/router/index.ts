@@ -169,7 +169,7 @@ const router = createRouter({
     {
       path: '/noAuth',
       name: '无权限',
-      component: () => '../views/NoAuthView.vue',
+      component: () => import('../views/NoAuthView.vue'),
       meta: {
         hideInMenu: true,
       },
